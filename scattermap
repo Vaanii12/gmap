@@ -1,0 +1,35 @@
+import gspread
+import gmplot
+from oauth2client.service_account import ServiceAccountCredentials
+import webbrowser
+scope = ['https://www.googleapis.com/auth/drive']
+credentials = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+gmap3 = gmplot.GoogleMapPlotter(30.075984, 76.877656, 7)
+client = gspread.authorize(credentials)
+sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/13KHE80t_HXXOag2rH0e9pBldSgytCCNa_jwVGxzrlfk/edit#")
+worksheet = sheet.worksheet('Sheet1')
+
+lats = worksheet.col_values(2)
+
+lat = list(map(float, lats[1:]))
+# print(lat)
+longi = worksheet.col_values(3)
+longitude = [float(ele) for ele in longi[1:]]
+l = worksheet.col_values(4)
+lab=[float(ele) for ele in l[1:]]
+# print (lab)
+for item in lab:
+    if item<200:
+        gmap3.scatter(lat, longitude, color="blue", size=100, marker=True, label=lab)
+
+# Set different latitude and longitude points
+# declare the center of the map, and how much we want the map zoomed in
+
+# Scatter map
+
+# Plot method Draw a line in between given coordinates
+# gmap3.plot(Charminar_top_attraction_lats, Charminar_top_attraction_lons, 'cornflowerblue', edge_width = 3.0)
+# Your Google_API_Key
+gmap3.apikey = "AIzaSyDqUhcQkCONjiKjs34WnvJ56k7uTjSs_HY"
+# save it to html
+gmap3.draw(webbrowser.open('scatter.html'))
